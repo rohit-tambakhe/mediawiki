@@ -1,6 +1,6 @@
 services:
-  loadbalancer:
-    charm: cs:trusty/haproxy-19
+  haproxy:
+    charm: cs:trusty/haproxy-13
     num_units: 1
     options:
       default_log: global
@@ -33,8 +33,8 @@ services:
     annotations:
       gui-x: "619"
       gui-y: "-406"
-  wiki:
-    charm: cs:trusty/mediawiki-5
+  mediawiki:
+    charm: cs:trusty/mediawiki-3
     num_units: 1
     options:
       debug: false
@@ -44,7 +44,7 @@ services:
       gui-x: "618"
       gui-y: "-128"
   memcached:
-    charm: cs:trusty/memcached-13
+    charm: cs:trusty/memcached-11
     num_units: 1
     options:
       allow-ufw-ip6-softfail: true
@@ -66,12 +66,13 @@ services:
       gui-x: "926"
       gui-y: "-125"
   mysql:
-    charm: cs:trusty/mariadb-3
+    charm: cs:trusty/mysql-29
     num_units: 1
     options:
       binlog-format: MIXED
       block-size: 5
       dataset-size: 80%
+      flavor: distro
       ha-bindiface: eth0
       ha-mcastport: 5411
       max-connections: -1
@@ -85,11 +86,34 @@ services:
     annotations:
       gui-x: "926"
       gui-y: "123"
+  mysql-slave:
+    charm: cs:trusty/mysql-29
+    num_units: 1
+    options:
+      binlog-format: MIXED
+      block-size: 5
+      dataset-size: 80%
+      flavor: distro
+      ha-bindiface: eth0
+      ha-mcastport: 5411
+      max-connections: -1
+      preferred-storage-engine: InnoDB
+      query-cache-size: -1
+      query-cache-type: "OFF"
+      rbd-name: mysql1
+      tuning-level: safest
+      vip_cidr: 24
+      vip_iface: eth0
+    annotations:
+      gui-x: "619"
+      gui-y: "124"
 series: trusty
 relations:
-- - wiki:cache
+- - mediawiki:cache
   - memcached:cache
-- - loadbalancer:reverseproxy
-  - wiki:website
-- - wiki:db
-  - mysql:db
+- - haproxy:reverseproxy
+  - mediawiki:website
+- - mysql-slave:slave
+  - mysql:master
+- - mediawiki:slave
+  - mysql-slave:db
