@@ -68,7 +68,27 @@ $ aws ec2 create-internet-gateway
 }
 ```
 
-Attach the internet gateway to VPC:
+```sh
+root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 describe-internet-gateways
+{
+    "InternetGateways": [
+        {
+            "Attachments": [
+                {
+                    "State": "available",
+                    "VpcId": "vpc-068f4988d0c46cedf"
+                }
+            ],
+            "InternetGatewayId": "igw-08f44854f67b15e39",
+            "OwnerId": "808641108845",
+            "Tags": []
+        }
+    ]
+}
+
+```
+
+## Attach the internet gateway to VPC:
 aws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW
 5.	Get the route table details:
 
@@ -80,29 +100,51 @@ aws ec2 describe-route-tables --filter "Name=vpc-id,Values=$VPC_ID"
         {
             "Associations": [
                 {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-0cf74a32459898793",
+                    "RouteTableId": "rtb-0157f08f342bdcbff",
+                    "SubnetId": "subnet-025b969f518ca0512",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
                     "Main": true,
                     "RouteTableAssociationId": "rtbassoc-0dcd22423a9a453e5",
                     "RouteTableId": "rtb-0157f08f342bdcbff",
                     "AssociationState": {
                         "State": "associated"
                     }
-                }
-            ],
-            "PropagatingVgws": [],
-            "RouteTableId": "rtb-0157f08f342bdcbff",
-            "Routes": [
+                },
                 {
-                    "DestinationCidrBlock": "10.250.0.0/16",
-                    "GatewayId": "local",
-                    "Origin": "CreateRouteTable",
-                    "State": "active"
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-0ec777e00bbf16ad7",
+                    "RouteTableId": "rtb-0157f08f342bdcbff",
+                    "SubnetId": "subnet-0f62a10fbeab970b3",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-0dce727ef7abba3c2",
+                    "RouteTableId": "rtb-0157f08f342bdcbff",
+                    "SubnetId": "subnet-0455b31248ef4f635",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-002d0befb8788b137",
+                    "RouteTableId": "rtb-0157f08f342bdcbff",
+                    "SubnetId": "subnet-022861daf8d1e8e29",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
                 }
             ],
-            "Tags": [],
-            "VpcId": "vpc-068f4988d0c46cedf",
-            "OwnerId": "808641108845"
-        }
-    ]
+
 }
 ```
 
@@ -209,13 +251,13 @@ added space "public" with subnets 10.250.0.0/24, 10.250.1.0/24, 10.250.2.0/24, 1
 ## If you do juju models you will see the model deployed for this lab:
 
 ```sh
-$ juju models
-Controller: my-controller
+Controller: kube-controller
 
-Model       Cloud/Region   Type  Status     Machines  Cores  Access  Last connection
-controller  aws/us-east-1  ec2   available         1      2  admin   just now
-default     aws/us-east-1  ec2   available         0      -  admin   9 minutes ago
-k8s*        aws/us-east-1  ec2   available         0      -  admin   6 minutes ago
+Model        Cloud/Region   Type  Status     Machines  Cores  Units  Access  Last connection
+controller   aws/us-east-1  ec2   available         1      2  -      admin   just now
+default      aws/us-east-1  ec2   available         0      -  -      admin   24 minutes ago
+kubernetes*  aws/us-east-1  ec2   available         8     16  13     admin   6 minutes ago
+
 ```
 10.	Now deploy Highly Available Media Wiki with Kubernetes Cluster using Juju
 ```sh
@@ -228,6 +270,8 @@ juju deploy cs:tambakherohit/ Kubernetes-worker
 ## If everything works well considering our network deployment and control plane deployment you will see the following output:
 
 ```sh
+watch -c juju status --color
+
 Every 2.0s: juju status --color                                                                                                          ubuntu-s-4vcpu-8gb-fra1-01: Sun Sep  6 15:49:29 2020
 
 Model       Controller       Cloud/Region   Version  SLA          Timestamp
@@ -273,8 +317,14 @@ Machine  State    DNS             Inst id              Series  AZ          Messa
 
 ```
 
-# For scaling out
+## For scaling out
 
 You can add and remove more mediawiki instances to horizontally scale based on your convenience:
 
     juju add-unit wiki
+
+
+## Now manage the cluster using JUJU commands:
+https://juju.is/docs/commands
+ 
+juju add-unit wiki
