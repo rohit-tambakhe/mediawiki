@@ -1,4 +1,4 @@
-# Lab networking setup for Mediawiki using JUJU:
+# Lab setup for Mediawiki using JUJU:
 
 1.	Create the VPC to host the Kubernetes Cluster:
 
@@ -238,7 +238,7 @@ Initial model "default" added
 ```
 
 ## Juju works with different models denoting different Deployments in Kubernetes:
-Here I am creating a new model for ThoughtWorks Deployment named k8s and adding the public space so that interviewers will be able to access it from the management machine:
+Here I am creating a new model for ThoughtWorks Deployment named kubernetes and adding the public space so that you will be able to access it from the management machine:
 
 ```sh
 root@ubuntu-s-4vcpu-8gb-fra1-01:~# juju add-model kubernetes aws --config vpc-id=$VPC_ID
