@@ -54,7 +54,7 @@ SUBNET3_ID=subnet-022861daf8d1e8e29
 SUBNET4_ID=subnet-0455b31248ef4f635
 ```
 
-## Before performing operations using kubectl it is recommended to run `source aws_vars.sh` to source the correct environment variables.
+### NOTE: Before performing operations using kubectl it is recommended to run `source aws_vars.sh` to source the correct environment variables.
 
 4.	Create and Internet Gateway and attach to VPC to make it publicly available.
 
