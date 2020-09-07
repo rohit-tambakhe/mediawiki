@@ -339,4 +339,14 @@ https://juju.is/docs/commands
 $ kubectl get svc
 NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.152.183.1   <none>        443/TCP   21h
+
+kubectl get deployments --all-namespaces
+NAMESPACE                         NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+ingress-nginx-kubernetes-worker   default-http-backend-kubernetes-worker   1/1     1            1           22h
+kube-system                       coredns                                  1/1     1            1           22h
+kube-system                       kube-state-metrics                       1/1     1            1           22h
+kube-system                       metrics-server-v0.3.6                    1/1     1            1           22h
+kubernetes-dashboard              dashboard-metrics-scraper                1/1     1            1           22h
+kubernetes-dashboard              kubernetes-dashboard                     1/1     1            1           22h
+
 ```
