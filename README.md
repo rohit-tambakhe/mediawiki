@@ -46,7 +46,7 @@ root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET4_ID=$SUBNET4_ID" >> aws_vars.sh
 
 If you cat aws_vars.sh file this should be the output:
 ```sh
-cat aws_vars.sh
+$ cat aws_vars.sh
 VPC_ID=vpc-068f4988d0c46cedf
 SUBNET1_ID=subnet-0f62a10fbeab970b3
 SUBNET2_ID=subnet-025b969f518ca0512
@@ -71,7 +71,7 @@ $ aws ec2 create-internet-gateway
 ```
 
 ```sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 describe-internet-gateways
+$ aws ec2 describe-internet-gateways
 {
     "InternetGateways": [
         {
@@ -91,11 +91,11 @@ root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 describe-internet-gateways
 ```
 
 ## Attach the internet gateway to VPC:
-aws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW
+$ aws ec2 attach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IGW
 5.	Get the route table details:
 
 ```sh
-aws ec2 describe-route-tables --filter "Name=vpc-id,Values=$VPC_ID"
+$ aws ec2 describe-route-tables --filter "Name=vpc-id,Values=$VPC_ID"
 
 {
     "RouteTables": [
@@ -153,7 +153,7 @@ aws ec2 describe-route-tables --filter "Name=vpc-id,Values=$VPC_ID"
 6.	Create the default route to IGW:
 
 ```sh
-aws ec2 create-route --route-table-id $RT --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
+$ aws ec2 create-route --route-table-id $RT --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
 {
     "Return": true
 }
@@ -162,32 +162,36 @@ aws ec2 create-route --route-table-id $RT --destination-cidr-block 0.0.0.0/0 --g
 And associate the route tables with all the subnets to make them public:
 
 ```sh
-aws ec2 create-route --route-table-id $RT --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
+$ aws ec2 create-route --route-table-id $RT --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW
 {
     "Return": true
 }
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 associate-route-table --subnet-id $SUBNET1_ID --route-table-id $RT
+
+$ aws ec2 associate-route-table --subnet-id $SUBNET1_ID --route-table-id $RT
 {
     "AssociationId": "rtbassoc-0ec777e00bbf16ad7",
     "AssociationState": {
         "State": "associated"
     }
 }
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 associate-route-table --subnet-id $SUBNET2_ID --route-table-id $RT
+
+$ aws ec2 associate-route-table --subnet-id $SUBNET2_ID --route-table-id $RT
 {
     "AssociationId": "rtbassoc-0cf74a32459898793",
     "AssociationState": {
         "State": "associated"
     }
 }
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 associate-route-table --subnet-id $SUBNET3_ID --route-table-id $RT
+
+$ aws ec2 associate-route-table --subnet-id $SUBNET3_ID --route-table-id $RT
 {
     "AssociationId": "rtbassoc-002d0befb8788b137",
     "AssociationState": {
         "State": "associated"
     }
 }
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 associate-route-table --subnet-id $SUBNET4_ID --route-table-id $RT
+
+$ aws ec2 associate-route-table --subnet-id $SUBNET4_ID --route-table-id $RT
 {
     "AssociationId": "rtbassoc-0dce727ef7abba3c2",
     "AssociationState": {
@@ -199,20 +203,20 @@ root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 associate-route-table --subnet-id $SU
 7.	Setup VPC subnet attributes to map public IP on launch:
 
 ```sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 modify-subnet-attribute --subnet-id $SUBNET1_ID --map-public-ip-on-launch
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 modify-subnet-attribute --subnet-id $SUBNET2_ID --map-public-ip-on-launch
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 modify-subnet-attribute --subnet-id $SUBNET3_ID --map-public-ip-on-launch
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# aws ec2 modify-subnet-attribute --subnet-id $SUBNET4_ID --map-public-ip-on-launch
+$ aws ec2 modify-subnet-attribute --subnet-id $SUBNET1_ID --map-public-ip-on-launch
+$ aws ec2 modify-subnet-attribute --subnet-id $SUBNET2_ID --map-public-ip-on-launch
+$ aws ec2 modify-subnet-attribute --subnet-id $SUBNET3_ID --map-public-ip-on-launch
+$ aws ec2 modify-subnet-attribute --subnet-id $SUBNET4_ID --map-public-ip-on-launch
 ```
 
 8.	Install Juju automation tool for better administration of Kubernetes Cluster in AWS.
 ```sh
-snap install --classic juju
+$ snap install --classic juju
 ```
 9.	Bootstrap the Kubernetes Controller to be used with Juju.
 I have deployed it in subnet 1.
 ```sh
-juju bootstrap aws kube-controller \
+$ juju bootstrap aws kube-controller \
 > --config vpc-id=$VPC_ID --config vpc-id-force=true --to "subnet=$SUBNET1_ID"
 
 WARNING! The specified vpc-id does not satisfy the minimum Juju requirements,
@@ -243,16 +247,18 @@ Initial model "default" added
 Here I am creating a new model for ThoughtWorks Deployment named kubernetes and adding the public space so that you will be able to access it from the management machine:
 
 ```sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# juju add-model kubernetes aws --config vpc-id=$VPC_ID
+$ juju add-model kubernetes aws --config vpc-id=$VPC_ID
 Added 'k8s' model on aws/us-east-1 with credential 'default' for user 'admin'
 
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# juju add-space public 10.250.0.0/24 10.250.1.0/24 10.250.2.0/24 10.250.3.0/24 -m k8s
+$ juju add-space public 10.250.0.0/24 10.250.1.0/24 10.250.2.0/24 10.250.3.0/24 -m k8s
 
 added space "public" with subnets 10.250.0.0/24, 10.250.1.0/24, 10.250.2.0/24, 10.250.3.0/24
 ```
 ## If you do juju models you will see the model deployed for this lab:
 
 ```sh
+
+$ juju models
 Controller: kube-controller
 
 Model        Cloud/Region   Type  Status     Machines  Cores  Units  Access  Last connection
@@ -263,17 +269,17 @@ kubernetes*  aws/us-east-1  ec2   available         8     16  13     admin   6 m
 ```
 10.	Now deploy Highly Available Media Wiki with Kubernetes Cluster using Juju
 ```sh
-juju deploy cs:tambakherohit/mediawiki
+$ juju deploy cs:tambakherohit/mediawiki
 
-juju deploy cs:tambakherohit/Kubernetes-master
+$ juju deploy cs:tambakherohit/Kubernetes-master
 
-juju deploy cs:tambakherohit/Kubernetes-worker
+$ juju deploy cs:tambakherohit/Kubernetes-worker
 ```
 
 ## If everything works well considering our network deployment and control plane deployment you will see the following output:
 
 ```sh
-watch -c juju status --color
+$ watch -c juju status --color
 
 Every 2.0s: juju status --color                                                                                                          ubuntu-s-4vcpu-8gb-fra1-01: Sun Sep  6 15:49:29 2020
 
@@ -324,7 +330,7 @@ Machine  State    DNS             Inst id              Series  AZ          Messa
 
 You can add and remove more mediawiki instances to horizontally scale based on your convenience:
 ```sh
-    juju add-unit wiki
+$ juju add-unit wiki
 ```
 You can use both kubectl and juju to perform operations on this cluster.
 Juju makes it rather simple to add relationships between different pods and scale the cluster on fly.
@@ -340,7 +346,7 @@ $ kubectl get svc
 NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
 kubernetes   ClusterIP   10.152.183.1   <none>        443/TCP   21h
 
-kubectl get deployments --all-namespaces
+$ kubectl get deployments --all-namespaces
 NAMESPACE                         NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
 ingress-nginx-kubernetes-worker   default-http-backend-kubernetes-worker   1/1     1            1           22h
 kube-system                       coredns                                  1/1     1            1           22h
@@ -348,5 +354,4 @@ kube-system                       kube-state-metrics                       1/1  
 kube-system                       metrics-server-v0.3.6                    1/1     1            1           22h
 kubernetes-dashboard              dashboard-metrics-scraper                1/1     1            1           22h
 kubernetes-dashboard              kubernetes-dashboard                     1/1     1            1           22h
-
 ```
