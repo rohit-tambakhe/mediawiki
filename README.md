@@ -330,7 +330,7 @@ You can use both kubectl and juju to perform operations on this cluster.
 Juju makes it rather simple to add relationships between different pods and scale the cluster on fly.
 
 
-## JUJU commands rederence:
+## JUJU commands reference:
 https://juju.is/docs/commands
  
 ## You can run kubectl commands from the control machine to perform various Kuberneted Operations
