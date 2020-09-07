@@ -31,14 +31,14 @@ $ aws ec2 create-vpc --cidr-block 10.250.0.0/16
 
 ```sh
 VPC_ID=vpc-068f4988d0c46cedf
-echo "VPC_ID=$VPC_ID" > aws_vars.sh
+echo "VPC_ID=$VPC_ID" >> aws_vars.sh
 source aws_vars.sh
 ```
 
 3.	Create the required subnets for High Availability and save the subnet IDs in aws_vars.sh file we created before:
 
 ```sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET^CD=$SUBNET1_ID" > aws_vars.sh
+root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET1_ID=$SUBNET1_ID" >> aws_vars.sh
 root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET2_ID=$SUBNET2_ID" >> aws_vars.sh
 root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET3_ID=$SUBNET3_ID" >> aws_vars.sh
 root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET4_ID=$SUBNET4_ID" >> aws_vars.sh
@@ -53,6 +53,8 @@ SUBNET2_ID=subnet-025b969f518ca0512
 SUBNET3_ID=subnet-022861daf8d1e8e29
 SUBNET4_ID=subnet-0455b31248ef4f635
 ```
+
+## Before performing operations using kubectl it is recommended to run `source aws_vars.sh` to source the correct environment variables.
 
 4.	Create and Internet Gateway and attach to VPC to make it publicly available.
 
@@ -265,8 +267,9 @@ juju deploy cs:tambakherohit/mediawiki
 
 juju deploy cs:tambakherohit/Kubernetes-master
 
-juju deploy cs:tambakherohit/ Kubernetes-worker
+juju deploy cs:tambakherohit/Kubernetes-worker
 ```
+
 ## If everything works well considering our network deployment and control plane deployment you will see the following output:
 
 ```sh
@@ -320,11 +323,20 @@ Machine  State    DNS             Inst id              Series  AZ          Messa
 ## For scaling out
 
 You can add and remove more mediawiki instances to horizontally scale based on your convenience:
-
+```sh
     juju add-unit wiki
+```
+You can use both kubectl and juju to perform operations on this cluster.
+Juju makes it rather simple to add relationships between different pods and scale the cluster on fly.
 
 
-## Now manage the cluster using JUJU commands:
+## JUJU commands rederence:
 https://juju.is/docs/commands
  
-juju add-unit wiki
+## You can run kubectl commands from the control machine to perform various Kuberneted Operations
+
+```sh
+$ kubectl get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.152.183.1   <none>        443/TCP   21h
+```
