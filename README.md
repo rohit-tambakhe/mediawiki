@@ -355,3 +355,20 @@ kube-system                       metrics-server-v0.3.6                    1/1  
 kubernetes-dashboard              dashboard-metrics-scraper                1/1     1            1           22h
 kubernetes-dashboard              kubernetes-dashboard                     1/1     1            1           22h
 ```
+
+Here the images which I have used in this implementation
+
+```sh
+$ kubectl get pods --all-namespaces -o jsonpath="{..image}" |\
+> tr -s '[[:space:]]' '\n' |\
+> sort |\
+> uniq -c
+      2 rocks.canonical.com:443/cdk/addon-resizer-amd64:1.8.5
+      2 rocks.canonical.com:443/cdk/coredns/coredns-amd64:1.6.7
+      2 rocks.canonical.com:443/cdk/coreos/kube-state-metrics:v1.9.5
+      2 rocks.canonical.com:443/cdk/defaultbackend-amd64:1.5
+      2 rocks.canonical.com:443/cdk/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.30.0
+      2 rocks.canonical.com:443/cdk/kubernetesui/dashboard-amd64:v2.0.0-rc5
+      2 rocks.canonical.com:443/cdk/kubernetesui/metrics-scraper:v1.0.3
+      2 rocks.canonical.com:443/cdk/metrics-server-amd64:v0.3.6
+```
