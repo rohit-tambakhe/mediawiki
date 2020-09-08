@@ -38,10 +38,10 @@ source aws_vars.sh
 3.	Create the required subnets for High Availability and save the subnet IDs in aws_vars.sh file we created before:
 
 ```sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET1_ID=$SUBNET1_ID" >> aws_vars.sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET2_ID=$SUBNET2_ID" >> aws_vars.sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET3_ID=$SUBNET3_ID" >> aws_vars.sh
-root@ubuntu-s-4vcpu-8gb-fra1-01:~# echo "SUBNET4_ID=$SUBNET4_ID" >> aws_vars.sh
+$ echo "SUBNET1_ID=$SUBNET1_ID" >> aws_vars.sh
+$ echo "SUBNET2_ID=$SUBNET2_ID" >> aws_vars.sh
+$ echo "SUBNET3_ID=$SUBNET3_ID" >> aws_vars.sh
+$ echo "SUBNET4_ID=$SUBNET4_ID" >> aws_vars.sh
 ```
 
 If you cat aws_vars.sh file this should be the output:
