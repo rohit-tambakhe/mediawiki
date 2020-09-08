@@ -339,7 +339,7 @@ Juju makes it rather simple to add relationships between different pods and scal
 ## JUJU commands reference:
 https://juju.is/docs/commands
  
-## You can run kubectl commands from the control machine to perform various Kuberneted Operations
+## You can run kubectl commands from the control machine to perform various Kubernetes Operations
 
 ```sh
 $ kubectl get svc
@@ -356,7 +356,7 @@ kubernetes-dashboard              dashboard-metrics-scraper                1/1  
 kubernetes-dashboard              kubernetes-dashboard                     1/1     1            1           22h
 ```
 
-Here the images which I have used in this implementation
+Here are the images which I have used in this implementation
 
 ```sh
 $ kubectl get pods --all-namespaces -o jsonpath="{..image}" |\
